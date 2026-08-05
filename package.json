@@ -1,0 +1,16 @@
+{
+  "name": "world-radio",
+  "version": "1.0.0",
+  "description": "World Radio - discover and play internet radio stations from around the world",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theelegantthreat/World-Radio.git"
+  },
+  "author": "The Elegant Threat (theelegantthreat)",
+  "private": false,
+  "scripts": {
+    "lint": "echo \"No lint configured\"",
+    "test": "echo \"No tests configured\""
+  }
+}
