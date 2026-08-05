@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2026 The Elegant Threat (theelegantthreat)
- * SPDX-License-Identifier: GPL-3.0-only
- */
-
 package com.example.ui.theme
 
 import androidx.compose.material3.Typography

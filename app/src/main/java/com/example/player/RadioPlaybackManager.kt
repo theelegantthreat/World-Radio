@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2026 The Elegant Threat (theelegantthreat)
- * SPDX-License-Identifier: GPL-3.0-only
- */
-
 package com.example.player
 
 import android.media.AudioAttributes
@@ -119,3 +114,13 @@ class RadioPlaybackManager {
     fun stop() {
         mediaPlayer?.stop()
         currentStation = null
+        _playbackState.value = PlaybackState.Idle
+    }
+
+    fun release() {
+        mediaPlayer?.release()
+        mediaPlayer = null
+        currentStation = null
+        _playbackState.value = PlaybackState.Idle
+    }
+}

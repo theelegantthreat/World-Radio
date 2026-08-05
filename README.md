@@ -1,155 +1,94 @@
-# World Radio
+# 📻 World Radio
 
-[![Release version](https://img.shields.io/github/v/release/theelegantthreat/World-Radio)](https://github.com/theelegantthreat/World-Radio/releases) [![License](https://img.shields.io/github/license/theelegantthreat/World-Radio)](https://github.com/theelegantthreat/World-Radio/blob/main/LICENSE) [![Build Status](https://img.shields.io/github/actions/workflow/status/theelegantthreat/World-Radio/ci.yml?branch=main)](https://github.com/theelegantthreat/World-Radio/actions) [![Stars](https://img.shields.io/github/stars/theelegantthreat/World-Radio?style=social)](https://github.com/theelegantthreat/World-Radio/stargazers)
+An interactive, feature-rich Android live radio streaming application built with **Kotlin** and **Jetpack Compose**. Stream live FM/AM stations from around the globe, record broadcasts in real-time, fine-tune stations using an interactive tuner dial, and save your favorite channels locally.
 
-World Radio is a cross-platform radio app that lets users discover, play, and save internet radio stations from around the world. It focuses on a simple, fast listening experience with station search, favorites, categories, and persistent playlists.
+---
 
-## Table of Contents
-- [Features](#features)
-- [Demo](#demo)
-- [Technologies](#technologies)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-  - [Clone](#clone)
-  - [Install](#install)
-  - [Run (Development)](#run-development)
-  - [Build (Production)](#build-production)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
+## ✨ Features
 
-## Features
-- Browse thousands of internet radio stations by country, language, and genre
-- Fast search and station metadata (now-playing, bitrate, country flag)
-- Play / pause, volume, and background playback
-- Save favorites and build playlists
-- Offline caching of station metadata
-- Responsive UI for mobile and desktop
-- Optional user accounts and syncing (if backend present)
+- 🌐 **Global Station Search**: Search thousands of live radio stations worldwide powered by the [Radio Browser API](https://www.radio-browser.info/). Filter easily by station name, country, or genre tags.
+- 🎛️ **Retro FM Tuner Dial**: Interactive frequency tuner dial providing a tactile analog radio experience with frequency and band indicator calculations.
+- 🎙️ **Live Audio Stream Recording**: Record live audio streams directly to local storage (`.mp3` / `.aac`). Features real-time duration tracking, built-in playback, and recording management.
+- 🎵 **Live Track Title Metadata**: Automatic ICY stream metadata fetching displaying current playing track info in real time.
+- 🎚️ **Embedded Playback Controller**: Sticky player widget with audio spectrum visualizers, volume controls, station switching, and play/pause controls.
+- ⭐️ **Favorites & Listening History**: Save stations to favorites, track play counts, and access recently played stations backed by a local Room database.
+- 💾 **Database Backup & Restore**: Export and import station library backups in JSON format.
+- 🎨 **Cosmic Cyberpunk Theme**: Styled with Material 3 components, vibrant cyan accents, dynamic lighting effects, and dark cosmic aesthetics.
 
-## Demo
-Include screenshots or a short GIF here:
+---
 
-- Desktop UI: `docs/screenshots/desktop.png`
-- Mobile UI: `docs/screenshots/mobile.png`
+## 🛠️ Tech Stack & Architecture
 
-(Replace the above with real images or links to live demo.)
+- **Language**: [Kotlin](https://kotlinlang.org/)
+- **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose) with **Material 3**
+- **Architecture**: MVVM (Model-View-ViewModel) with `StateFlow` and Kotlin Coroutines
+- **Local Database**: [Room Database](https://developer.android.com/training/data-storage/room) with KSP
+- **Networking**: [Retrofit 2](https://square.github.io/retrofit/) & [OkHttp 4](https://square.github.io/okhttp/)
+- **JSON Serialization**: [Moshi](https://github.com/square/moshi) (Kotlin Code Gen)
+- **Image Loading**: [Coil Compose](https://coil-kt.github.io/coil/compose/)
+- **Audio Engine**: Android `MediaPlayer` & OkHttp Byte Streaming engine
 
-## Technologies
-This README is generic — replace with the actual stack used in your project:
+---
 
-- Frontend: React / Vue / Svelte / React Native / Flutter / Native
-- Backend (optional): Node.js / Python / Go
-- Streaming: HLS / Icecast / Shoutcast / direct stream URLs
-- Persistence: LocalStorage / SQLite / IndexedDB / Server-side DB
-- Hosting: Vercel / Netlify / GitHub Pages / Docker / self-hosted
+## 🚀 Getting Started
 
-## Prerequisites
-- Node.js >= 16 (if using a JavaScript frontend/backend)
-- npm or yarn
-- (Optional) Docker for containerized deployment
-- (Optional) Mobile SDKs: Android Studio / Xcode (for native builds)
+### Prerequisites
 
-## Getting Started
+- **Android Studio**: Ladybug / Jellyfish or newer
+- **JDK**: Version 11 or higher
+- **Minimum SDK**: Android 7.0 (API level 24)
+- **Target SDK**: Android 15 (API level 36)
 
-### Clone
-git clone https://github.com/theelegantthreat/World-Radio.git
-cd World-Radio
+### Installation & Build
 
-### Install
-# Using npm
-npm install
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/your-username/world-radio.git
+   cd world-radio
+   ```
 
-# or using yarn
-yarn install
+2. **Open in Android Studio**:
+   Open Android Studio and select **Open**, then navigate to the cloned project folder.
 
-### Run (Development)
-# Start dev server (frontend)
-npm run dev
+3. **Build the Project**:
+   Build the app using Gradle CLI or Android Studio:
+   ```bash
+   ./gradlew assembleDebug
+   ```
 
-# Start backend (if applicable)
-npm run start:api
+4. **Run on Device / Emulator**:
+   Select your target emulator or connected device and press **Run** (`Shift + F10`).
 
-Open http://localhost:3000 (adjust port as needed).
+---
 
-### Build (Production)
-npm run build
-npm run start:prod
-
-If using Docker:
-
-docker build -t world-radio .
-docker run -p 3000:3000 world-radio
-
-## Configuration
-Create a `.env` file at the project root (example):
+## 📂 Project Structure
 
 ```
-# Example .env
-REACT_APP_API_URL=https://api.example.com
-STREAM_TIMEOUT=10000
-DEFAULT_COUNTRY=US
-ANALYTICS_KEY=your_analytics_key_here
+app/src/main/java/com/example/
+├── data/
+│   ├── api/          # RadioBrowser API & ICY Metadata fetcher
+│   ├── db/           # Room Database, DAO, and Entities
+│   ├── model/        # Data classes and Moshi DTO models
+│   └── repository/   # Repository layer for API & local DB coordination
+├── player/           # RadioPlaybackManager & RadioRecordingManager
+├── ui/
+│   ├── screens/      # Jetpack Compose UI screens & components
+│   ├── theme/        # Material 3 Color palette, Typography & Theme
+│   └── viewmodel/    # RadioViewModel managing reactive UI state
+└── MainActivity.kt   # Entry point Activity
 ```
 
-If your app uses an external radio directory (e.g., Radio Browser), add its endpoint:
+---
+
+## 🧪 Testing
+
+Run local unit and Robolectric tests with Gradle:
+```bash
+./gradlew testDebugUnitTest
 ```
-RADIO_BROWSER_API=https://de1.api.radio-browser.info/json
-```
 
-## Usage
-- Search stations by name, country, language, or genre.
-- Click a station to start playing.
-- Use the heart (♡) icon to add a station to Favorites.
-- Create playlists by adding multiple stations and save them locally or to your account.
-- Use offline caching to reduce metadata load time.
+---
 
-## Testing
-# Run unit tests
-npm test
+## 📄 License
 
-# Run end-to-end tests (if configured)
-npm run e2e
-
-Add and document your testing strategy here (Jest, Vitest, Cypress, etc.).
-
-## Deployment
-- Static frontend: build and deploy to Vercel/Netlify/GitHub Pages
-- Server + frontend: deploy using Docker, Heroku, Render, or your cloud provider
-- Mobile builds: publish to Apple App Store and Google Play Store (follow platform guidelines)
-
-CI/CD example (GitHub Actions):
-- Lint on push
-- Run tests on PR
-- Build and deploy on merge to main
-
-## Contributing
-Thanks for considering contributing! Please follow these steps:
-1. Fork the repository
-2. Create a feature branch: git checkout -b feat/awesome
-3. Commit your changes: git commit -m "Add awesome feature"
-4. Push to the branch: git push origin feat/awesome
-5. Open a Pull Request describing your changes
-
-Please open an issue first for major changes or proposals.
-
-## Code of Conduct
-This project follows the Contributor Covenant. Please be respectful and constructive.
-
-## License
-This project is licensed under the GNU General Public License v3.0. See LICENSE for details.
-
-## Acknowledgements
-- Radio station metadata provided by Radio Browser (https://www.radio-browser.info/) — if applicable
-- Icons and UI components from [Icon set / UI library]
-- Thanks to contributors and open-source projects that made this possible
-
-## Contact
-Maintainer: The Elegant Threat (@theelegantthreat)  
-Project repository: https://github.com/theelegantthreat/World-Radio
+This project is open-source and available under the [MIT License](LICENSE).

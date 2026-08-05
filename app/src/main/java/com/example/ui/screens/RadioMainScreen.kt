@@ -1241,23 +1241,6 @@ fun PlaybackWidget(
     val recordingDuration by viewModel.recordingManager.recordingDuration.collectAsState()
     val context = LocalContext.current
 
-    // Stream elapsed play time
-    var activeSeconds by remember { mutableStateOf(0) }
-    LaunchedEffect(playbackState) {
-        if (playbackState is PlaybackState.Playing) {
-            while (true) {
-                delay(1000)
-                activeSeconds += 1
-            }
-        } else if (playbackState !is PlaybackState.Paused) {
-            activeSeconds = 0
-        }
-    }
-
-    val minutes = activeSeconds / 60
-    val seconds = activeSeconds % 60
-    val timeString = String.format("%02d:%02d", minutes, seconds)
-
     if (isMinimized) {
         Card(
             modifier = modifier
@@ -1372,18 +1355,6 @@ fun PlaybackWidget(
                     }
 
                     IconButton(
-                        onClick = onMinimizeToggle,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowUp,
-                            contentDescription = "Maximize Panel",
-                            tint = Color.White.copy(alpha = 0.8f),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    IconButton(
                         onClick = onCloseClick,
                         modifier = Modifier.size(32.dp)
                     ) {
@@ -1448,17 +1419,6 @@ fun PlaybackWidget(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         IconButton(
-                            onClick = onMinimizeToggle,
-                            modifier = Modifier.size(28.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = "Minimize Panel",
-                                tint = Color.White.copy(alpha = 0.7f),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                        IconButton(
                             onClick = onCloseClick,
                             modifier = Modifier.size(28.dp)
                         ) {
@@ -1474,7 +1434,7 @@ fun PlaybackWidget(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Spinning vinyl/glowing logo
+                // Station logo
                 GlowingLogo(
                     isPlaying = playbackState is PlaybackState.Playing,
                     favicon = activeStation.favicon,
@@ -1532,11 +1492,11 @@ fun PlaybackWidget(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Live tuning state indicator with real-time stream clock
+                    // Live tuning state indicator
                     val stateText = when {
-                        isRecording -> "REC • ${formatDurationSec(recordingDuration)} • ${activeStation.bitrate} KBPS"
-                        playbackState is PlaybackState.Loading -> "TUNING WAVE / BUFFERING..."
-                        playbackState is PlaybackState.Playing -> "LIVE • $timeString • ${activeStation.bitrate} KBPS"
+                        isRecording -> "REC • ${formatDurationSec(recordingDuration)}"
+                        playbackState is PlaybackState.Loading -> "BUFFERING..."
+                        playbackState is PlaybackState.Playing -> "LIVE STREAMING"
                         playbackState is PlaybackState.Paused -> "STATION PAUSED"
                         playbackState is PlaybackState.Error -> "STREAM CONNECTION ERROR"
                         else -> "TUNER DECK READY"
@@ -1632,38 +1592,14 @@ fun PlaybackWidget(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // The gorgeous retro tuner dial
-            RetroTunerDial(
-                activeStation = activeStation,
-                onTuneToStation = onTuneToStation,
-                allStations = allStations,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            // Discrete Control buttons row:
-            // back arrow, stop, play, pause, seek forward
+            // Control buttons row (Stop and Combined Play/Pause)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Seek Backward Arrow Button
-                IconButton(
-                    onClick = onSeekBackward,
-                    modifier = Modifier
-                        .size(44.dp)
-                        .border(1.dp, CyberTeal.copy(alpha = 0.3f), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.SkipPrevious,
-                        contentDescription = "Seek Backward",
-                        tint = CyberTeal,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-
                 // Stop Button
                 IconButton(
                     onClick = onStop,
@@ -1679,13 +1615,11 @@ fun PlaybackWidget(
                     )
                 }
 
-                // Play Button
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Unified Play / Pause Button
                 IconButton(
-                    onClick = {
-                        if (playbackState !is PlaybackState.Playing) {
-                            onTogglePlayPause()
-                        }
-                    },
+                    onClick = onTogglePlayPause,
                     modifier = Modifier
                         .size(52.dp)
                         .background(
@@ -1695,48 +1629,10 @@ fun PlaybackWidget(
                         .border(1.5.dp, CyberTeal, CircleShape)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Play",
+                        imageVector = if (playbackState is PlaybackState.Playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = if (playbackState is PlaybackState.Playing) "Pause" else "Play",
                         tint = if (playbackState is PlaybackState.Playing) CyberTeal else ImmersiveDarkPurpleText,
                         modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                // Pause Button
-                IconButton(
-                    onClick = {
-                        if (playbackState is PlaybackState.Playing) {
-                            onTogglePlayPause()
-                        }
-                    },
-                    modifier = Modifier
-                        .size(52.dp)
-                        .background(
-                            if (playbackState is PlaybackState.Paused) CyberTeal.copy(alpha = 0.2f) else Color.Transparent,
-                            CircleShape
-                        )
-                        .border(1.5.dp, CyberTeal, CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Pause,
-                        contentDescription = "Pause",
-                        tint = CyberTeal,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                // Seek Forward Arrow Button
-                IconButton(
-                    onClick = onSeekForward,
-                    modifier = Modifier
-                        .size(44.dp)
-                        .border(1.dp, CyberTeal.copy(alpha = 0.3f), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.SkipNext,
-                        contentDescription = "Seek Forward",
-                        tint = CyberTeal,
-                        modifier = Modifier.size(22.dp)
                     )
                 }
             }
@@ -1784,19 +1680,6 @@ fun PlaybackWidget(
                 )
             }
 
-            // Beautiful Digital Audio Spectrum wave animation directly during active playback!
-            AnimatedVisibility(visible = playbackState is PlaybackState.Playing) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                ) {
-                    HorizontalDivider(color = CyberTeal.copy(alpha = 0.15f), thickness = 1.dp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    AudioSpectrumVisualizer()
-                }
-            }
-
             // Quick display of connection errors
             if (playbackState is PlaybackState.Error) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -1820,28 +1703,11 @@ fun GlowingLogo(
     stationName: String,
     size: androidx.compose.ui.unit.Dp = 44.dp
 ) {
-    val rotation = remember { Animatable(0f) }
-
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            rotation.animateTo(
-                targetValue = 360f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(8000, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                )
-            )
-        } else {
-            rotation.stop()
-        }
-    }
-
     Box(
         modifier = Modifier
             .size(size)
             .clip(CircleShape)
             .border(2.dp, CyberTeal, CircleShape)
-            .shadow(if (isPlaying) 10.dp else 0.dp, CircleShape, spotColor = CyberTeal)
     ) {
         if (favicon.isNotBlank()) {
             AsyncImage(
