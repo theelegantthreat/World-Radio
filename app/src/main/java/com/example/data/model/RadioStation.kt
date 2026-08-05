@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2026 The Elegant Threat (theelegantthreat)
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 package com.example.data.model
 
 import com.squareup.moshi.Json

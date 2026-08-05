@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2026 The Elegant Threat (theelegantthreat)
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 package com.example.data.repository
 
 import com.example.data.api.RadioBrowserApi
@@ -90,37 +95,3 @@ class RadioRepository(private val stationDao: StationDao) {
     suspend fun markAsPlayed(station: StationEntity) {
         val existing = stationDao.getStationById(station.stationuuid)
         if (existing == null) {
-            stationDao.insertStation(station.copy(lastPlayedAt = System.currentTimeMillis(), playCount = 1))
-        } else {
-            val updatedCount = existing.playCount + 1
-            stationDao.updateLastPlayedAndCount(station.stationuuid, System.currentTimeMillis(), updatedCount)
-        }
-    }
-
-    // API Operations
-    suspend fun searchStations(
-        name: String? = null,
-        country: String? = null,
-        tag: String? = null
-    ): List<RadioStation> {
-        return try {
-            api.searchStations(
-                name = if (name?.isNotBlank() == true) name else null,
-                country = if (country?.isNotBlank() == true) country else null,
-                tag = if (tag?.isNotBlank() == true) tag else null
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-
-    suspend fun getPopularStations(): List<RadioStation> {
-        return try {
-            api.getPopularStations()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-}
