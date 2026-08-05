@@ -1,0 +1,6 @@
+{
+  "name": "World Radio",
+  "description": "Listen to high-quality live FM radio stations from around the world with interactive location-based discovery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
