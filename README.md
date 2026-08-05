@@ -143,7 +143,7 @@ Please open an issue first for major changes or proposals.
 This project follows the Contributor Covenant. Please be respectful and constructive.
 
 ## License
-This project is licensed under the MIT License. See LICENSE for details.
+This project is licensed under the GNU General Public License v3.0. See LICENSE for details.
 
 ## Acknowledgements
 - Radio station metadata provided by Radio Browser (https://www.radio-browser.info/) — if applicable
