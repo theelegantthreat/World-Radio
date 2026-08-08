@@ -6,9 +6,3 @@ plugins {
   alias(libs.plugins.roborazzi) apply false
   alias(libs.plugins.secrets) apply false
 }
-
-// Project license metadata
-// This makes the license visible to some tooling that reads Gradle extra properties.
-// SPDX: GPL-3.0-only
-extra["license"] = "GPL-3.0-only"
-extra["licenseName"] = "GNU General Public License v3.0 (GPL-3.0-only)"
